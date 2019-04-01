@@ -1,0 +1,84 @@
+/*
+*	DKU Operating System Lab
+*	    Lab1 (Scheduler Algorithm Simulator)
+*	    Student id : 	32152661
+*	    Student name : 	Oh Donggeon
+*
+*   lab1_sched.c :
+*       - Lab1 source file.
+*       - Must contains scueduler algorithm function'definition.
+*
+*/
+
+#include <aio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <time.h>
+#include <sys/time.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <assert.h>
+#include <pthread.h>
+#include <asm/unistd.h>
+
+#include "lab1_sched_types.h"
+
+/*
+ * you need to implement FCFS, RR, SPN, SRT, HRRN, MLFQ scheduler. 
+ */
+
+int input(int* at, int* st) {
+	int p_number;
+
+	printf("number of Process : ");
+	scanf("%d", &p_number);
+	
+	at = (int*) malloc(p_number * sizeof(int));
+	st = (int*) malloc(p_number * sizeof(int));
+
+	for(int i = 0; i < p_number; i++) {
+		printf("arrival time & service time of process %d: ", i + 1);
+		scanf("%d %d", &at[i], &st[i]);
+	}
+
+	return p_number;
+}
+
+int fcfs() {
+	int p_number;
+	int* arrivalTime;
+        int* serviceTime;
+
+	p_number = input(arrivalTime, serviceTime);
+
+	for(int i = 0; i < p_number; i++) {
+		for(int j = 0; j < p_number; j++) {
+			if(arrivalTime[j] == i) {
+				for(int k = 0; k < serviceTime[j]; j++) {
+					printf("%d", serviceTime[j]);
+				}
+			}
+		}
+	}
+	
+	return 0;
+}
+
+int rr() {
+
+}
+
+int mlfo() {
+
+
+}
+
+int lottery() {
+
+
+}
