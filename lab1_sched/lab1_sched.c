@@ -231,26 +231,27 @@ int* mlfq(int numPs, int at[], int st[]) {
 
                 for(i = 0; i < numPs; i++) {    //check and add queue..
                         if(at[i] == time) {
-				push(&queue[0], i, st[i]);
-				
-				/*	experiment code..... ignore it
-				if(queue[0].size == 1) {
-					for(i = 1; i < level; i++) {
-						if(!isEmpty(&queue[i])) {
-							break;
-						}
+				int num = 0;
+				int index = -1;
+				for(int j = 0; j < level; j++) {
+					if(!isEmpty(&queue[j])) {
+						num += queue[j].size;
+						index = j;
 					}
-					if(i == level) {
-						printf("time : %d, numPs : %d\n", time, queue[0].front->numPs);
-                                       	        push(&queue[1], queue[0].front->numPs, queue[0].front->st);
-                                                pop(&queue[0]);
-                                                push(&queue[0], i, st[i]);
+				}
+				if(num == 1) {
+					if(index == 0) {
+						push(&queue[0], i, st[i]);
+						push(&queue[0], queue[0].front->numPs, queue[0].front->st);
+						pop(&queue[0]);
+					}
+					else {
+						push(&queue[0], i, st[i]);
 					}
 				}
 				else {
 					push(&queue[0], i, st[i]);
 				}
-				*/
 			}
                 }
 		if(tq == 0) {
@@ -273,7 +274,6 @@ int* mlfq(int numPs, int at[], int st[]) {
                                 actPs--;
 			}
                         else if(tq == 0) {
-				/*	experiment code... ignore it
                                 for(i = 0; i < level; i++) {
 					if(i == curPs) {
 						if(queue[i].size != 1) {
@@ -284,8 +284,7 @@ int* mlfq(int numPs, int at[], int st[]) {
                                                 break;
                                         }
                                 }
-				*/
-			//	if(i != level) {
+				if(i != level) {
                 	                if(level == curPs + 1) {
         	                                push(&queue[curPs], queue[curPs].front->numPs, queue[curPs].front->st);
 	                                        pop(&queue[curPs]);
@@ -294,68 +293,10 @@ int* mlfq(int numPs, int at[], int st[]) {
                 	                        push(&queue[curPs + 1], queue[curPs].front->numPs, queue[curPs].front->st);
         	                                pop(&queue[curPs]);
 	                                }
-			//	}
-			}
-		}
-
-		time++;
-
-
-		//ignore this below
-		/*
-		if(tq == 0) {	//choose the next process
-			tq = length[curPs];
-			printf("time : %d, time quentum : %d, curPs : %d \n",time, tq, curPs);
-		}
-
-		if(tq != 0) {	//execute the process
-			sched[time] = queue[curPs].front->numPs + 1;
-			queue[curPs].front->st--;
-			tq--;
-			if(queue[curPs].front->st == 0) {
-				pop(&queue[curPs]);
-				tq = 0;
-				actPs--;
-
-				for(i = curPs; i < level; i++) {
-					if(!isEmpty(&queue[i])) {
-						break;
-					}
-				}
-				if(i == level) {
-					curPs = 0;
-				}
-				else {
-					curPs = i;
-				}
-			}
-			else if(tq == 0) {		//maybe here the problem
-				Node value = *queue[curPs].front;
-				pop(&queue[curPs]);
-				
-				for(i = curPs; i < level; i++) {
-					if(!isEmpty(&queue[i])) {
-						break;
-					}
-				}
-				if(level == curPs + 1) {
-					push(&queue[curPs], value.numPs, value.st);
-				}
-				else {
-					push(&queue[curPs + 1], value.numPs, value.st);
-				}
-				if(i == level) {
-					if(level != curPs + 1) {
-						curPs++;
-					}
-				}
-				else {
-					curPs = i;
 				}
 			}
 		}
 		time++;
-		*/
 	}
 	return sched; 
 }
