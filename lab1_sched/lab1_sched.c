@@ -214,7 +214,6 @@ int* mlfq(int numPs, int at[], int st[]) {
 
 	printf("\ninput the base : ");
 	scanf("%d", &base);
-	printf("\n");
 
 	//initialize
 	Queue queue[level];
