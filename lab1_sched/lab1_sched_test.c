@@ -49,8 +49,8 @@ void inputPs(int numPs, int at[], int st[]) {     //input value of process
 
 void print(int* sched, int numPs) {
 	int i, j;
-	for(i = 0; sched[i] != 0; i++);		//sched length
-	int size = i;				//sched length
+	for(i = 0; sched[i] != 0; i++);		//get the size of result
+	int size = i;				//result size
 
 	//print
 	printf("\n");
@@ -63,14 +63,14 @@ void print(int* sched, int numPs) {
 		printf("%c : ", 64 + i);
 		for(j = 0; j < size; j++) {
 			if(i == sched[j]) {
-				if(j / 10 > 0) {
+				if(j / 10 > 0) {	//if time is over 10
 					printf("==|");
 					continue;
 				}
 				printf("=|");
 			}
 			else {
-				if(j / 10 > 0) {
+				if(j / 10 > 0) {	//if time is over 10
 					printf("  |");
 					continue;
 				}
@@ -95,6 +95,10 @@ int schedule(char* ch) {
 			printf("input the number of process : ");
 			scanf("%d", &numPs);
 			break;
+		default:
+			msg();
+			free(sched);
+			return 0;
 	}
 	int at[numPs];
 	int st[numPs];

@@ -71,50 +71,33 @@ void pop(Queue *queue) {
 	queue->size--;
 }
 
-int act(Queue *queue) {
-	Node *value = queue->front;
-	value->st--;
-
-	if(queue->front->st == 0) {
-		queue->front = queue->front->next;
-		free(value);
-		return 1;
-	}
-	else {
-		pop(queue);
-	}
-
-	return 0;
-}
-
 int* expMem(int *sched, int *temp, int time) {
 	temp = (int *) malloc(sizeof(int) * (time + 2));
 	
 	for(int i = 0; i <= time; i++) {
 		temp[i] = sched[i];
 	}
-
 	free(sched);
 	temp[time] = -1;
+	temp[time + 1] = 0;
 
 	return temp;
 }
 
 int* fcfs(int numPs, int at[], int st[]) {
 	Queue queue;
-	int *sched = (int *) malloc(sizeof(int));
+	int *sched = (int *) malloc(sizeof(int));	//result value
 	int time = 0;
-	int actPs = numPs;
+	int actPs = numPs;	//remain running process in total process.
 	int i;
 
 	//initialize
 	sched[0] = -1;
 	reset(&queue);
 	
-	while(actPs != 0) {
-		//expand sched(result value)
+	while(actPs != 0) {	//All process is done -> escape!
 		int* temp;
-		sched = expMem(sched, temp, time);
+		sched = expMem(sched, temp, time);	//expand result value
                 
 		for(i = 0; i < numPs; i++) {    //check and add queue..
                         if(at[i] == time) {
@@ -123,7 +106,7 @@ int* fcfs(int numPs, int at[], int st[]) {
                 }
 
                 if(!isEmpty(&queue)) {             //if queue exist
-			sched[time] = queue.front->numPs + 1;
+			sched[time] = queue.front->numPs + 1;	//input the execute process (if process 0 execute -> put in 1(A), 1 -> 2(B))
 			queue.front->st--;
 			if(queue.front->st == 0) {
 				pop(&queue);
@@ -202,7 +185,7 @@ int powPow(int base, int exp) {
 
 int* mlfq(int numPs, int at[], int st[]) {
         int* sched = (int*) malloc(sizeof(int));
-        int level, base;		//level = level of queue, base = determine the time slice of each level
+        int level, base;		//level = level of queue, base = determine the time slice for each level
 	int actPs = numPs;
         int curPs = 0;
 	int time = 0;
@@ -226,20 +209,20 @@ int* mlfq(int numPs, int at[], int st[]) {
 
         while(actPs != 0) {
                 int* temp;
-                sched = expMem(sched, temp, time); //expand result value
+                sched = expMem(sched, temp, time); //expand result value (return value)
 
                 for(i = 0; i < numPs; i++) {    //check and add queue..
                         if(at[i] == time) {
 				int num = 0;
 				int index = -1;
-				for(int j = 0; j < level; j++) {
+				for(int j = 0; j < level; j++) {	//count the queue
 					if(!isEmpty(&queue[j])) {
 						num += queue[j].size;
 						index = j;
 					}
 				}
-				if(num == 1) {
-					if(index == 0) {
+				if(num == 1) {				//if queue is alone
+					if(index == 0) {		//priority not going down
 						push(&queue[0], i, st[i]);
 						push(&queue[0], queue[0].front->numPs, queue[0].front->st);
 						pop(&queue[0]);
@@ -253,7 +236,7 @@ int* mlfq(int numPs, int at[], int st[]) {
 				}
 			}
                 }
-		if(tq == 0) {
+		if(tq == 0) {	//times up!!!
 			for(i = 0; i < level; i++) {
 				if(!isEmpty(&queue[i])) {
 					curPs = i;
@@ -262,18 +245,18 @@ int* mlfq(int numPs, int at[], int st[]) {
 				}
 			}
 		}
-		if(tq != 0) {
+		if(tq != 0) {	//excute queue
                         sched[time] = queue[curPs].front->numPs + 1;
                         queue[curPs].front->st--;
 			tq--;
-                        if(queue[curPs].front->st == 0) {
+                        if(queue[curPs].front->st == 0) { //queue is done
                                 pop(&queue[curPs]);
 				curPs = 0;
                                 tq = 0;
                                 actPs--;
 			}
-                        else if(tq == 0) {
-                                for(i = 0; i < level; i++) {
+                        else if(tq == 0) {	//when the queue time's up
+                                for(i = 0; i < level; i++) {	//if queue is alone
 					if(i == curPs) {
 						if(queue[i].size != 1) {
 							break;
@@ -283,7 +266,7 @@ int* mlfq(int numPs, int at[], int st[]) {
                                                 break;
                                         }
                                 }
-				if(i != level) {
+				if(i != level) {	//priority not going down
                 	                if(level == curPs + 1) {
         	                                push(&queue[curPs], queue[curPs].front->numPs, queue[curPs].front->st);
 	                                        pop(&queue[curPs]);
@@ -302,13 +285,13 @@ int* mlfq(int numPs, int at[], int st[]) {
 
 int* lottery(int numPs, int at[], int st[]) {
         int* sched = (int*) malloc(sizeof(int));
-	int* totalTicket;
-	int mag = 10;
+	int* totalTicket;	//determine = total ratio of executing process * mag
+	int mag = 10;		//number of tickets per ratio (ratio = 2, tickets = 20 / ratio = 3, tickets = 30)
 	int ratio[numPs];
 	int ticket[numPs];
 	int curPs[numPs];	//current activating process
-	int sumRatio = 0;
-	int draw = 0;
+	int sumRatio = 0;	//total ratio of executing process
+	int draw = 0;		//index of totalticket
         int actPs = numPs;
 	int times = 0;
         int i;
@@ -329,24 +312,24 @@ int* lottery(int numPs, int at[], int st[]) {
 		int* temp;
 		sched = expMem(sched, temp, times);
 
-                for(i = 0; i < numPs; i++) {    //check and add queue..
+                for(i = 0; i < numPs; i++) {    //check and add process..
                         if(at[i] == times) {
 				curPs[i] = 1;
 			}
                 }
 
-		for(i = 0; i < numPs; i++) {
+		for(i = 0; i < numPs; i++) {	//give a ticket and add the ratio of executing process
 			if(curPs[i] == 1) {
 				ticket[i] = ratio[i] * mag;
 				sumRatio += ratio[i];
 			}
 		}
-		int size = sumRatio * mag;
+		int size = sumRatio * mag;	//number of total ticket
 		int index = 0;
 
 		totalTicket = (int *) malloc(sizeof(int) * size);
 		
-		while(size) {
+		while(size) {			//put each ticket into the total ticket
 			for(i = 0; i < numPs; i++) {
 				if(ticket[i] != 0) {
 					totalTicket[index] = i;
@@ -359,7 +342,7 @@ int* lottery(int numPs, int at[], int st[]) {
 		
 		size = sumRatio * mag;
 		
-		if(size) {
+		if(size) {	//draw for winners!!!
 			draw = rand() % size;
 			draw = totalTicket[draw];
 			sched[times] = draw + 1;
