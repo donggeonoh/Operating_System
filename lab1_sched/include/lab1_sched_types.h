@@ -35,7 +35,6 @@ typedef struct Queue {
 int isEmpty(Queue *queue);
 void push(Queue *queue, int numPs, int st);
 void pop(Queue *queue);
-int act(Queue *queue);
 int* expMem(int* sched, int* temp, int time);
 int powPow(int base, int exp);
 
