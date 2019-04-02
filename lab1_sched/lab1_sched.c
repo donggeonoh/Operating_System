@@ -300,10 +300,80 @@ int* mlfq(int numPs, int at[], int st[]) {
 	return sched; 
 }
 
-/*
 int* lottery(int numPs, int at[], int st[]) {
-	int* sched;
+        int* sched = (int*) malloc(sizeof(int));
+	int* totalTicket;
+	int mag = 10;
+	int ratio[numPs];
+	int ticket[numPs];
+	int curPs[numPs];	//current activating process
+	int sumRatio = 0;
+	int draw = 0;
+        int actPs = numPs;
+	int times = 0;
+        int i;
+
+	for(i = 0; i < numPs; i++) {
+		printf("input the ratio of process %c : ", 65 + i);
+		scanf("%d", &ratio[i]);
+
+		ticket[i] = 0;
+		curPs[i] = 0;
+	}
+        
+	//initialize
+        srand((int)time(NULL));
+	sched[0] = -1;
+
+        while(actPs != 0) {
+		int* temp;
+		sched = expMem(sched, temp, times);
+
+                for(i = 0; i < numPs; i++) {    //check and add queue..
+                        if(at[i] == times) {
+				curPs[i] = 1;
+			}
+                }
+
+		for(i = 0; i < numPs; i++) {
+			if(curPs[i] == 1) {
+				ticket[i] = ratio[i] * mag;
+				sumRatio += ratio[i];
+			}
+		}
+		int size = sumRatio * mag;
+		int index = 0;
+
+		totalTicket = (int *) malloc(sizeof(int) * size);
+		
+		while(size) {
+			for(i = 0; i < numPs; i++) {
+				if(ticket[i] != 0) {
+					totalTicket[index] = i;
+					index++;
+					ticket[i]--;
+					size--;
+				}
+			}
+		}
+		
+		size = sumRatio * mag;
+		
+		if(size) {
+			draw = rand() % size;
+			draw = totalTicket[draw];
+			sched[times] = draw + 1;
+			st[draw]--;
+
+			if(st[draw] == 0) {
+				curPs[draw] = 0;
+				actPs--;
+			}
+		}
+		free(totalTicket);
+		sumRatio = 0;
+		times++;
+	}
 
 	return sched;
 }
-*/

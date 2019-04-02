@@ -115,8 +115,8 @@ int schedule(char* ch) {
 			print(sched, numPs);
 			break;
 		case '4':
-		//	sched = lottery(numPs, at, st);
-		//	print(sched, numPs);
+			sched = lottery(numPs, at, st);
+			print(sched, numPs);
 			break;
 		default :
 			msg();
