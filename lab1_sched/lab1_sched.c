@@ -328,18 +328,21 @@ int* lottery(int numPs, int at[], int st[]) {
 		int index = 0;
 
 		totalTicket = (int *) malloc(sizeof(int) * size);
-		
+		printf("size : %d\n", size);	
 		while(size) {			//put each ticket into the total ticket
 			for(i = 0; i < numPs; i++) {
-				if(ticket[i] != 0) {
-					totalTicket[index] = i;
-					index++;
-					ticket[i]--;
-					size--;
+				if(ticket[i] != 0) { 
+					for(int j = 0; j < ratio[i]; j++) {
+						totalTicket[index] = i;
+						printf("t : %d i : %d\n", totalTicket[index], index);
+						index++;
+						ticket[i]--;
+						size--;
+					}
 				}
 			}
 		}
-		
+		printf("\n");
 		size = sumRatio * mag;
 		
 		if(size) {	//draw for winners!!!
