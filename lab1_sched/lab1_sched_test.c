@@ -1,8 +1,8 @@
 /*
 *	DKU Operating System Lab
 *	    Lab1 (Scheduler Algorithm Simulator)
-*	    Student id :	32152661
-*	    Student name : 	Oh Donggeon
+*	    Student id : 	32152661	32154022
+*	    Student name : 	Oh Donggeon	Jang Hyeonung
 *
 *   lab1_sched.c :
 *       - Lab1 source file.
