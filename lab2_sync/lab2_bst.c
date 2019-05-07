@@ -84,10 +84,10 @@ lab2_node* lab2_node_create(int key) {
 int lab2_node_insert(lab2_tree *tree, lab2_node *new_node) {
 	// You need to implement lab2_node_insert function.
 	
-	lab2_node* p = tree->root;	//parent
-	lab2_node* q = NULL;		//child
+	lab2_node* p = tree->root;	//child
+	lab2_node* q = NULL;		//parent
 	
-	while(p) {	//find the place that new_node put in
+	while(p) {	//repeat until node find the position of the new node
 		q = p;
 		if(new_node->key == p->key) {
 			return -1;
@@ -97,7 +97,7 @@ int lab2_node_insert(lab2_tree *tree, lab2_node *new_node) {
 		else p = p->right;
 	}
 	
-	if(tree->root == NULL) tree->root = new_node;
+	if(tree->root == NULL) tree->root = new_node; //root is null
 	else if(new_node->key < q->key) q->left = new_node;
 	else q->right = new_node;
 
@@ -197,9 +197,9 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 
 	lab2_node* p = tree->root;	//parent
 	lab2_node* q = tree->root;	//child
-	lab2_node* temp = NULL;
+	lab2_node* temp = NULL;		
 
-	while(q != NULL) {
+	while(q != NULL) {		//find the same value of key
 		if(key == q->key) {
 			break;
 		}
@@ -212,24 +212,24 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 			q = q->right;
 		}
 	}
-	if(q != NULL) {
-		if(q->left != NULL && q->right != NULL) {
+	if(q != NULL) {			
+		if(q->left != NULL && q->right != NULL) {//if q have both child
 			temp = q;
 			temp = q->right;
 
-			if(temp->left != NULL) {
-				while(temp->left != NULL) {
-					temp = temp->left;
+			if(temp->left != NULL) {//if q->left is not null
+				while(temp->left != NULL) {//find the node
+					temp = temp->left; //the smallest value
 				}
 
 				q->key = temp->key;
 			}
-			else {
+			else {			//q->left is null
 				q->key = temp->key;
 				q->right = temp->right;
 			}
 		}
-		else if(q->left != NULL) {
+		else if(q->left != NULL) {	//if q have left child
 			lab2_node* temp = q;
 			if(temp == tree->root) {
 				tree->root = q->left;
@@ -238,7 +238,7 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 				p->left = q->left;
 			}
 		}
-		else if(q->right != NULL) {
+		else if(q->right != NULL) {	//if q have right child
 			lab2_node* temp = q;
 			if(temp == tree->root) {
 				tree->root = q->right;
@@ -247,7 +247,7 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 				p->right = q->right;
 			}
 		}
-		else {
+		else {				//if q have not child
 			if(q == tree->root) {
 				tree->root = NULL;
 			}
