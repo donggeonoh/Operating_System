@@ -19,6 +19,8 @@
 
 #include "lab2_sync_types.h"
 
+pthread_mutex_t mutex;
+
 //A function that returns the address of a node that has a key value.
 /*
  * TODO
@@ -32,7 +34,7 @@ int lab2_node_print_inorder(lab2_tree *tree) {
 	print_inorder(tree->root);
 }
 
-void print_inorder(lab2_node* root) {
+int print_inorder(lab2_node* root) {
 	if(root != NULL) {
 		print_inorder(root->left);
 		print_inorder(root->right);
@@ -118,8 +120,15 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
         pthread_mutex_unlock(&new_node->mutex);
         lab2_node* q = NULL;
 
-        while(p) {
-                pthread_mutex_lock(&new_node->mutex);
+	pthread_mutex_lock(&new_node->mutex);
+        while(1) {
+		if(!p) {
+			pthread_mutex_unlock(&new_node->mutex);
+			break;
+		}
+		pthread_mutex_unlock(&new_node->mutex);
+
+		pthread_mutex_lock(&new_node->mutex);
                 q = p;
 		pthread_mutex_unlock(&new_node->mutex);
 
@@ -131,17 +140,31 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
                 pthread_mutex_unlock(&new_node->mutex);
 
                 pthread_mutex_lock(&new_node->mutex);
-                if(new_node->key < p->key) p = p->left;
-                else p = p->right;
-                pthread_mutex_unlock(&new_node->mutex);
+                if(new_node->key < p->key) {
+			p = p->left;
+			pthread_mutex_unlock(&new_node->mutex);
+		}
+                else {
+			p = p->right;
+			pthread_mutex_unlock(&new_node->mutex);
+		}
 
+		pthread_mutex_lock(&new_node->mutex);
         }
 
         pthread_mutex_lock(&new_node->mutex);
-        if(tree->root == NULL) tree->root = new_node;
-        else if(new_node->key < q->key) q->left = new_node;
-        else q->right = new_node;
-        pthread_mutex_unlock(&new_node->mutex);
+        if(tree->root == NULL) {
+		tree->root = new_node;
+		pthread_mutex_unlock(&new_node->mutex);
+	}
+        else if(new_node->key < q->key) {
+		q->left = new_node;
+		pthread_mutex_unlock(&new_node->mutex);
+	}
+        else {
+		q->right = new_node;
+        	pthread_mutex_unlock(&new_node->mutex);
+	}
 
         return 0;
 }
@@ -392,13 +415,13 @@ int lab2_node_remove_fg(lab2_tree *tree, int key) {
  */
 int lab2_node_remove_cg(lab2_tree *tree, int key) {
 	// You need to implement lab2_node_remove_cg function.
-	
-	pthread_mutex_lock(&tree->root->mutex);
+
+	pthread_mutex_lock(&mutex);
 	lab2_node* p = tree->root;	//parent
 	lab2_node* q = tree->root;	//child
-	pthread_mutex_unlock(&tree->root->mutex);
+	pthread_mutex_unlock(&mutex);
 
-	pthread_mutex_lock(&tree->root->mutex);
+	pthread_mutex_lock(&mutex);
 	while(q != NULL) {
 		if(key == q->key) {
 			break;
@@ -412,9 +435,9 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
 			q = q->right;
 		}
 	}
-	pthread_mutex_unlock(&tree->root->mutex);
+	pthread_mutex_unlock(&mutex);
 
-	pthread_mutex_lock(&tree->root->mutex);
+	pthread_mutex_lock(&mutex);
 	if(q != NULL) {
 		if(q->left != NULL && q->right != NULL) {
 			lab2_node* temp = q;
@@ -467,7 +490,8 @@ int lab2_node_remove_cg(lab2_tree *tree, int key) {
 			}
 		}
 	}
-	pthread_mutex_unlock(&tree->root->mutex);
+	pthread_mutex_unlock(&mutex);
+	return -1;
 }
 
 /*
