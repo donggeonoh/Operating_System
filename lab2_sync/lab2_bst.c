@@ -30,7 +30,9 @@
 int lab2_node_print_inorder(lab2_tree *tree) {
 	// You need to implement lab2_node_print_inorder function.
 	print_inorder(tree->root);
+	printf("\n");
 }
+
 void print_inorder(lab2_node* root) {
 	if(root != NULL) {
 		print_inorder(root->left);
@@ -50,6 +52,7 @@ lab2_tree* lab2_tree_create() {
 	lab2_tree* my_tree = (lab2_tree *) malloc(sizeof(lab2_tree));
 	return my_tree;
 }
+
 /*
  * TODO
  *  Implement function which creates struct lab2_node
@@ -67,6 +70,7 @@ lab2_node* lab2_node_create(int key) {
 
 	return node;
 }
+
 /* 
  * TODO
  *  Implement a function which insert nodes from the BST. 
@@ -96,6 +100,7 @@ int lab2_node_insert(lab2_tree *tree, lab2_node *new_node) {
 
 	return 0;
 }
+
 /* 
  * TODO
  *  Implement a function which insert nodes from the BST in fine-garined manner.
@@ -108,6 +113,7 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
 	// You need to implement lab2_node_insert_fg function.
 
 }
+
 /* 
  * TODO
  *  Implement a function which insert nodes from the BST in coarse-garined manner.
@@ -118,8 +124,27 @@ int lab2_node_insert_fg(lab2_tree *tree, lab2_node *new_node) {
  */
 int lab2_node_insert_cg(lab2_tree *tree, lab2_node *new_node) {
 	// You need to implement lab2_node_insert_cg function.
+        // You need to implement lab2_node_insert function.
+        lab2_node* p = tree->root;
+        lab2_node* q = NULL;
 
+        while(p) {
+                q = p;
+                if(new_node->key == p->key) {
+                        return -1;
+                }
+
+                if(new_node->key < p->key) p = p->left;
+                else p = p->right;
+        }
+
+        if(tree->root == NULL) tree->root = new_node;
+        else if(new_node->key < q->key) q->left = new_node;
+        else q->right = new_node;
+
+        return 0;
 }
+
 /* 
  * TODO
  *  Implement a function which remove nodes from the BST.
@@ -130,11 +155,12 @@ int lab2_node_insert_cg(lab2_tree *tree, lab2_node *new_node) {
  */
 int lab2_node_remove(lab2_tree *tree, int key) {
 	// You need to implement lab2_node_remove function.
-	
+
 	lab2_node* p = tree->root;	//parent
 	lab2_node* q = tree->root;	//child
 
-	while(q != NULL) {	
+	while(q != NULL) {
+
 		if(key == q->key) {
 			break;
 		}
@@ -150,14 +176,14 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 	if(q != NULL) {
 		if(q->left != NULL && q->right != NULL) {
 			lab2_node* temp = q;
-			
+
 			temp = q->right;
 
 			if(temp->left != NULL) {
 				while(temp->left != NULL) {
 					temp = temp->left;
 				}
-			
+
 				q->key = temp->key;
 				lab2_node_delete(temp);
 			}
@@ -190,13 +216,13 @@ int lab2_node_remove(lab2_tree *tree, int key) {
 			}
 		}
 		else {
-                        if(q == tree->root) {
+			if(q == tree->root) {
 				lab2_node_delete(tree->root);
 				tree->root = NULL;
 			}
-                        else {
-                                lab2_node_delete(q);
-                        }
+			else {
+				lab2_node_delete(q);
+			}
 		}
 	}
 }
