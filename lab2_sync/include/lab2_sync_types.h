@@ -1,8 +1,8 @@
 /*
 *	DKU Operating System Lab
 *	    Lab2 (Synchronization)
-*	    Student id : 
-*	    Student name : 
+*	    Student id : 	32152661	32154022
+*	    Student name : 	Oh Donggeon	Jang Hyeonung
 *
 *   lab1_sched.c :
 *       - Lab2 header file.
@@ -63,10 +63,7 @@ typedef struct thread_arg{
  * TODO
  *  You need to implement these functions. 
  */
-
 void print_inorder(lab2_node* root);
-lab2_node* find_min_node(lab2_node* node);
-lab2_node* delete_node(lab2_node* node, int key);
 void node_insert(lab2_node* root, lab2_node * new_node);
 int lab2_node_print_inorder(lab2_tree *tree);
 lab2_tree *lab2_tree_create();
